@@ -1,0 +1,45 @@
+name: "Configure AWS Credentials"
+description: "Assume uma IAM Role via OIDC e configura as credenciais AWS para os steps seguintes"
+
+inputs:
+  role-to-assume:
+    description: "ARN completo da role a assumir via OIDC. Ex: arn:aws:iam::123456789012:role/minha-role"
+    required: true
+  aws-region:
+    description: "Região AWS. Ex: sa-east-1"
+    required: true
+  role-duration-seconds:
+    description: "Duração da sessão em segundos (padrão: 3600)"
+    required: false
+    default: "3600"
+  role-session-name:
+    description: "Nome da sessão para identificação nos logs de auditoria (padrão: GitHubActions)"
+    required: false
+    default: "GitHubActions"
+  role-skip-session-tagging:
+    description: "Pula o tagging da sessão STS — reduz permissões necessárias (padrão: true)"
+    required: false
+    default: "true"
+  mask-aws-account-id:
+    description: "Mascara o Account ID nos logs do runner (padrão: false)"
+    required: false
+    default: "false"
+
+outputs:
+  aws-account-id:
+    description: "Account ID da conta AWS autenticada"
+    value: ${{ steps.configure.outputs.aws-account-id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Assume Role via OIDC
+      id: configure
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume:           ${{ inputs.role-to-assume }}
+        aws-region:               ${{ inputs.aws-region }}
+        role-duration-seconds:    ${{ inputs.role-duration-seconds }}
+        role-session-name:        ${{ inputs.role-session-name }}
+        role-skip-session-tagging: ${{ inputs.role-skip-session-tagging }}
+        mask-aws-account-id:      ${{ inputs.mask-aws-account-id }}
