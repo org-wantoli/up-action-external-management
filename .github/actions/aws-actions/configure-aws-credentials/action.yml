@@ -24,6 +24,10 @@ inputs:
     description: "Mascara o Account ID nos logs do runner (padrão: false)"
     required: false
     default: "false"
+  role-chaining:
+    description: "Usa as credenciais AWS já ativas no ambiente para assumir a role, em vez de OIDC (padrão: false)"
+    required: false
+    default: "false"
 
 outputs:
   aws-account-id:
@@ -43,3 +47,4 @@ runs:
         role-session-name:        ${{ inputs.role-session-name }}
         role-skip-session-tagging: ${{ inputs.role-skip-session-tagging }}
         mask-aws-account-id:      ${{ inputs.mask-aws-account-id }}
+        role-chaining:            ${{ inputs.role-chaining }}
